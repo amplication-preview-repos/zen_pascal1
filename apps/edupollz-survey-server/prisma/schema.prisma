@@ -1,0 +1,49 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Question {
+  createdAt DateTime   @default(now())
+  id        String     @id @default(cuid())
+  responses Response[]
+  survey    Survey?    @relation(fields: [surveyId], references: [id])
+  surveyId  String?
+  text      String?
+  updatedAt DateTime   @updatedAt
+}
+
+model Survey {
+  createdAt   DateTime          @default(now())
+  description String?
+  id          String            @id @default(cuid())
+  questions   Question[]
+  status      EnumSurveyStatus?
+  title       String?
+  updatedAt   DateTime          @updatedAt
+}
+
+model Research {
+  abstract  String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  title     String?
+  updatedAt DateTime @updatedAt
+}
+
+model Response {
+  answer     String?
+  createdAt  DateTime  @default(now())
+  id         String    @id @default(cuid())
+  question   Question? @relation(fields: [questionId], references: [id])
+  questionId String?
+  updatedAt  DateTime  @updatedAt
+}
+
+enum EnumSurveyStatus {
+  Option1
+}
